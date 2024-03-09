@@ -1,0 +1,221 @@
+## 기본형과 참조형
+
+---
+![기본개념다지기1](https://github.com/JavaGrowthStudy/java-study/assets/151157127/be0d147e-ec3d-4c51-a8da-9b87c055b218)
+
+1. **기본형**(Primitive Type) **vs 참조형**(Reference Type) **개념**
+    - 기본형
+        - `boolean`, `char`, `byte`, `short`, `int`, `long`, `float`, `double`
+        - 기본형 변수 ← 실제로 직접 사용할 수 있는 값
+        - null 값 불가능 (기본값이 정해져 있음)
+    - 참조형
+        - 기본형을 제외한 나머지 ( `String`,  `Class`, `Interface`,  `Enum`, `Array`, `Map`, `Set`, … )
+            - String은 사실 클래스다. 따라서 참조형이다. 그런데 기본형처럼 문자 값을 바로 대입할 수 있다. 문자는 매우 자주 다루기 때문에 자바에서 특별하게 편의 기능을 제공하는 것이다.
+        - 참조형 변수 ← 실제 객체의 참조값 (위치)
+        - null 값 가능
+
++) 기본 타입이 참조타입에 비해 접근 속도가 훨씬 빠르고 메모리 양도 훨씬 적게 사용한다.
+
+2. **기본형과 참조형의 저장 공간**
+    - 기본형
+        - 메모리의 스택(stack)에 기본형 변수가 저장되고, 그 변수 안에 실제값이 할당됨.
+    - 참조형
+        - 메모리의 스택(stack)에 참조형 변수가 저장되고, 그 변수 안에 실제 객체의 주소값이 할당됨.
+        - 메모리의 힙(heap)에 실제 객체가 저장됨.
+        
+        ![기본개념다지기2](https://github.com/JavaGrowthStudy/java-study/assets/151157127/2bd3c018-3027-4c37-9f22-8a33efa017b8)
+        
+
+3. **int (기본형) vs. Integer (참조형)**
+    - int : 기본형
+        - null 값 불가능
+        - 따로 직접 함수를 적용할 수 없음
+    - Integer : 래퍼 클래스
+        - null 값 가능
+        - Integer 클래스에 정의된 함수를 적용할 수 있음(ex. 2진수 변환 함수 tobinaryString)
+    
+4. **Wrapper Class : 기본형을 객체로 다루기 위해 사용하는 클래스**
+    
+	![기본개념다지기3](https://github.com/JavaGrowthStudy/java-study/assets/151157127/c39ecd5b-edc7-406f-ad02-dcbab6d12949)
+
+    
+    - 래퍼 클래스가 필요한 이유
+        - null 값을 표현해야 할때
+        - Collection Frame Work를 사용해야 할 때 (컬렉션프레임워크는 객체만 저장 가능)
+        - 매개변수로 객체를 필요로 한 상황
+        - 그 외 기본형 값이 아닌 객체로 저장,사용해야하는 상황
+        - 등
+    
+    - 래퍼클래스의 값의 비교
+        
+        ```java
+        Integer wrapper_value1 = 123; //자동 박싱
+        Integer wrapper_value2 = new Integer(123); //새로운 객체 생성
+        Integer wrapper_value3 = Integer.valueOf(123); //존재하는 인스턴스면 재활용
+        
+        // ==
+        System.out.println(wrapper_value1 == wrapper_value2); //flase (주소값비교)
+        System.out.println(wrapper_value1 == wrapper_value3); //true (주소값비교)
+        System.out.println(wrapper_value2 == 123); //true (내부값비교) - 자동언박싱
+        
+        // .equals()
+        System.out.println(wrapper_value2.equals(wrapper_value3)); //true (내부값비교)
+        System.out.println(wrapper_value2.equals(123)); //true (내부값비교)
+        
+        // .compareTo()
+        // 같으면 0, 오른쪽이 더 크면 -1, 왼쪽이 더 크면 1
+        System.out.println(wrapper_value2.compareTo(wrapper_value3));  //0 (내부값비교)
+        ```
+        
+        - `new Integer(123)` vs. `Integer.valueOf(123)`
+            - `new Integer(123)` : 호출할 때마다 매번 새로운 객체를 생성
+            - `Integer.valueOf(123)` : 이미 생성한 객체가 있으면 그 객체를 재활용
+        
+        - `==` vs. `equals()`
+            
+            래퍼 클래스는 `equals()`가 오버라이딩 되어 있다. → 주소값이 아닌, 내부값 비교.
+            
+            - 래퍼 클래스 끼리 비교 :  `==` 주소값 비교, `equals()` 내부값 비교
+            - 래퍼 클래스와 기본형 타입 비교 : `==` 내부값 비교(자동언박싱), `equals()` 내부값 비교
+        
+        - 래퍼클래스는 비교(>,< 등) 연산자 사용 불가 → `.compareTo()` 사용
+        
+        - AutoBoxing, AutoUnBoxing
+            
+            jdk 1.5 부터는 자바 컴파일러가 자동으로 박싱, 언박싱을 해준다. 
+            
+            - Boxing :  primate type → Wrapper Class
+                - ex. `Integer a = Integer.valueOf(10);` ⇒ `Integer a = 10;`  가능
+            - UnBoxing : Wrapper Class → Primate type
+                - ex. `int b = a.intValue();` ⇒ `int b = a;`  가능
+    
+    - 래퍼클래스의 내부값 출력
+        
+        ```java
+        Integer i = new Integer(100);
+        System.out.println(i);  // 100 - 내부값 출력
+        ```
+        
+        - 래퍼클래스는 `toString()`이 오버라이딩 되어 있다. → 주소값이 아닌, 내부값 출력.
+    
+    - Integer, int 관련 메서드 정리
+        - `래퍼클래스.intValue()` : Integer → int
+        - `Integer.parseInt(문자열)` : String → int
+        - `Integer.valueOf(문자열)` : String → Integer
+        - `Integer.valueOf(int형)` : int → Integer (객체 재활용 가능)
+        - `new Integer(int형)` : int → Integer (매번 새로 생성)
+
+## 생성자
+
+---
+
+1. **기본 생성자**
+    - 매개변수가 없는 생성자를 기본 생성자라 한다.
+    - 자바의 모든 클래스에는 하나 이상의 생성자가 정의되어 있어야하기 때문에,
+        - 클래스에 생성자가 하나도 없으면, 자바 컴파일러는 기본 생성자를 자동으로 만들어준다.
+            
+            (이 때의 기본생성자는 매개변수가 없고, 작동하는 코드가 없음.)
+            
+        - 생성자가 하나라도 있으면, 자바는 기본 생성자를 만들지 않는다.
+
+2. **생성자 오버로딩**
+    - 생성자도 메서드 오버로딩처럼 매개변수만 다르게 해서 여러 생성자를 제공할 수 있다.
+    - 생성자 오버로딩을 할 때, this() 를 이용할 수 있다.
+
+3. **this. / this()**
+    - `this` : ‘인스턴스’ 자신을 가리키는 참조변수를 의미.
+        - 생성자의 매개변수로 선언된 변수의 이름이 인스턴스 변수와 같을 때 두 변수를 구분하기 위해 사용
+    - `this()` : ‘생성자’를 의미.
+        - 자기 자신 생성자를 호출할 때 사용
+        - this()생성자의 규칙
+            - 생성자 내부에서만 사용 가능
+            - 생성자 내부 중에서도 첫 줄에서만 사용 가능
+    - 사용 예시
+        
+        ```java
+        class Car{
+        		String color; // 인스턴스 변수
+            String gearType;
+            int door; 
+            
+        		//this. 사용
+            Car(String color, String gearType, int door){
+                this.color = color; 
+                this.gearType = gearType;
+                this.door = door;
+            }
+            
+        		//this() 사용
+            Car(){
+                this("white", "auto", 4);
+            }
+            
+        		//this() 사용
+            Car(String color){
+                this(color, "auto", 4);
+            }
+        }
+        ```
+        
+
+## 패키지 개념
+
+---
+
+1. **import 클래스**
+    - 다른 패키지 위치에 있는 클래스를 사용하기 위해서는 두 가지 방법이 있다.
+        1. import 사용하기 
+            
+            `import pack.a.User;` `User userA = new User();`
+            
+        2. 패키지 전체 경로 다 적어주기
+            
+            `pack.a.User userA = new pack.a.User();`
+            
+    - 같은 패키지 내에 있는 클래스를 사용하기 위해서는 import가 필요 없다.
+    - java.lang패키지의 모든 클래스는 import를 하지 않고도 사용 가능하다.
+    - 클래스를 import할 때, 그 클래스는 public일 때만 가능하다.
+        
+        (참고: 클래스는 public / default(생략 가능) 두 종류의 접근 제한자만 사용 가능하다.)
+        
+        
+
+2. **패키지의 계층구조**
+    - 아래와 같은 계층 구조를 이루는 패키지가 있다고 하자.
+        - a
+            - b
+            - c
+    - 패키지가 계층 구조를 이루더라도 모든 패키지는 서로 다른 패키지 이다.
+    - 즉, `a`, `a.b` , `a.c` 패키지는 서로 완전히 다른 패키지이다.
+    - 따라서, `a` 패키지의 클래스에서 `a.b` 또는 `a.c` 패키지의 클래스가 필요하면 `import` 해서 사용해야 한다. 반대의 경우에도 마찬가지이다.
+
+3. **패키지는 다르지만 클래스 이름이 같은 경우?**
+    - 클래스 이름이 동일하더라도 패키지가 다르면 다른 클래스로 인식한다.
+    - 같은 이름의 클래스가 있다면 import 는 둘 중 하나만 선택할 수 있다.
+    - 이때는 자주 사용하는 클래스를 import 하고 나머지를 패키지를 포함한 전체 경로를 적어주면 된다.
+        
+        물론 둘다 전체 경로를 적어준다면 import 를 사용하지 않아도 된다.
+        
+    
+    ```java
+    //pack.a.User
+    //pack.b.User
+    
+    package pack;
+    import pack.a.User; 
+    
+    public class PackageMain{
+    	public static void main(String[] args){
+    		User userA = new User(); //pack.a.User 는 import 하여 사용
+    		pack.b.User userB = new pack.b.User(); //pack.b.User는 전체 경로 적어서 사용
+    	}
+    }
+    ```
+    
+
+4. **패키지 규칙,관례**
+    - 패키지 이름은 모두 소문자로 사용한다. (관례)
+    - 패키지 이름의 앞 부분에는 일반적으로 회사의 도메인 이름을 거꾸로 사용한다.(관례)
+        
+        예를 들어, `com.company.myapp` 과 같이 사용한다. 
+        
